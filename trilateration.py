@@ -2,6 +2,7 @@ import sys
 import numpy as np
 
 #get the distance to the 4 known markers and calculates the position of the point 
+#test comment
 def trilaterate3D(r1, r2, r3, r4):
     p1=np.array([0,0,0])    #known points in 3D, change this based on measurements of the markers
     p2=np.array([1,0,0])
