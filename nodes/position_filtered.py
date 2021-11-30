@@ -13,7 +13,7 @@ class Filter():
 
     def __init__(self):
         rospy.init_node("position_filtered")
-        self.list = [Float64] * 50
+        self.list = numpy.empty([50,3], dtype= Float64)
         self.cnt = 0
         self.firstLoop = 1
         self.x = any
@@ -31,7 +31,7 @@ class Filter():
                                             self.on_sub,
                                             queue_size=1)
             pos = self.filterData(self.x)
-            self.position_pub.publish(self.x)
+            self.position_pub.publish([self.x,self.y,self.z])
             rate.sleep()
 
     def on_sub(self, msg):
