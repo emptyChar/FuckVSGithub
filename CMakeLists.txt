@@ -170,6 +170,7 @@ catkin_install_python(PROGRAMS
 )
 catkin_install_python(PROGRAMS
   nodes/controller.py
+  nodes/depth_calculator.py
   nodes/depth_estimator.py
   nodes/pose_setpoint.py
   nodes/position.py

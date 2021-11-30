@@ -28,7 +28,7 @@
         <include file="$(find bluerov_sim)/launch/range_sensor.launch"/>
 
         <node name="localization" pkg="autonomous_navigation" type="position.py" />
-        <node name="depth_calculator" pkg="depth_controller" type="depth_calculator.py" />
+        <node name="depth_calculator" pkg="autonomous_navigation" type="depth_calculator.py" />
         <node name="depth_estimator" pkg="autonomous_navigation" type="depth_estimator.py" />
         <node name="center_position" pkg="autonomous_navigation" type="center_position.py" />
         <node name="distance_estimator" pkg="autonomous_navigation" type="dist_estimator.py" />

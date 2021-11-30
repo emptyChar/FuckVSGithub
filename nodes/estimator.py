@@ -42,8 +42,6 @@ class Estimator():
     def run(self):
         rate = rospy.Rate(50.0)
         while not rospy.is_shutdown():
-            pos = self.filterData(self.posi_sub)
-            self.posi_filtered.publish(pos)
             a = self.estimation()
             self.my_pub.publish(a)
             rate.sleep()

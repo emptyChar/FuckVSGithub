@@ -26,9 +26,8 @@ class Filter():
         rate = rospy.Rate(50)        
         while not rospy.is_shutdown():
             self.pos_sub = rospy.Subscriber("position",
-                                         Point,
-                                         self.on_pos_sub,
-                                         queue_size=1)
+                                            Point,                                                                                        
+                                            queue_size=1)
             pos = self.filterData(self.pos_sub)
             self.position_pub.publish(pos)
 
