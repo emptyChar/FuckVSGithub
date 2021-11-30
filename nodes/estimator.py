@@ -30,6 +30,9 @@ class Estimator():
                                             Float64,
                                             queue_size=1)
 
+        self.posi_filtered = rospy.Publisher("position_filtered",
+                                            Float64,
+                                            queue_size=1)
     def on_depth(self, msg):
         self.mea = msg.data
 
@@ -39,6 +42,8 @@ class Estimator():
     def run(self):
         rate = rospy.Rate(50.0)
         while not rospy.is_shutdown():
+            pos = self.filterData(self.posi_sub)
+            self.posi_filtered.publish(pos)
             a = self.estimation()
             self.my_pub.publish(a)
             rate.sleep()
@@ -74,6 +79,7 @@ class Estimator():
         b.data = xk
         return b
 
+    
 
 def main():
     esti = Estimator()

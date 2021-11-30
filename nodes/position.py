@@ -70,11 +70,7 @@ class Trilateration():
             return ans2
 
     def run(self):
-        rate = rospy.Rate(50)
-        #for the filter which doesnt work yet
-        # self.list = [any] * 50
-        # self.cnt = 0
-        # self.firstLoop = 1
+        rate = rospy.Rate(50)        
         while not rospy.is_shutdown():
             self.distance_sub = rospy.Subscriber("ranges_estimate",
                                                  RangeMeasurementArray,
@@ -87,26 +83,11 @@ class Trilateration():
                 pos.y = posi[1]
             else:
                 pos.y = 6.7 - posi[1]
-            pos.z = posi[2]
-            #posit = self.filterData(pos)
+            pos.z = posi[2]            
             self.position_pub.publish(pos)
             rate.sleep()
 
-    def filterData(self, data):     
-        #moving average filter, but doesnt wor yet for some reason   
-        if self.cnt < 50:
-            self.list[self.cnt] = data
-            self.cnt += 1
-        else:
-            if self.firstLoop != 0:
-                self.firstLoop = 0
-            self.cnt = 0
-            self.list[self.cnt] = data
-            self.cnt += 1
-        if self.firstLoop != 0:
-            return data
-        else:
-            return sum(list) / len(list)
+
 
 def main():
     tri = Trilateration()
