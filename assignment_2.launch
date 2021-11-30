@@ -24,7 +24,7 @@
             <arg name="Y" default="$(arg Y)" />
         </include>
 
-        <!--Our Range Sensor that publishes distances to anchors -->
+        <!--Our Range Sensor that publishes distances to anchors <node name="position_filtered" pkg="autonomous_navigation" type="position_filtered.py" /> -->
         <include file="$(find bluerov_sim)/launch/range_sensor.launch"/>
 
         <node name="localization" pkg="autonomous_navigation" type="position.py" />
@@ -32,7 +32,7 @@
         <node name="depth_estimator" pkg="autonomous_navigation" type="depth_estimator.py" />
         <node name="center_position" pkg="autonomous_navigation" type="center_position.py" />
         <node name="distance_estimator" pkg="autonomous_navigation" type="dist_estimator.py" />
-        <node name="position_filtered" pkg="autonomous_navigation" type="position_filtered.py" />
+        
     </group>
 
 </launch>

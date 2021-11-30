@@ -33,7 +33,7 @@ class Estimator():
                                              self.on_sub,
                                              queue_size=1)
 
-        self.dist_est_pub = rospy.Publisher("ranges_estimate",
+        self.dist_est_pub = rospy.Publisher("ranges_filtered",
                                             RangeMeasurementArray,
                                             queue_size=4)
 

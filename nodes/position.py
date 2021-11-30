@@ -17,7 +17,7 @@ class Trilateration():
         self.d3 = 0
         self.d4 = 0
        
-        self.distance_sub = rospy.Subscriber("ranges_estimate",
+        self.distance_sub = rospy.Subscriber("ranges_filtered",
                                              RangeMeasurementArray,
                                              self.on_sub,
                                              queue_size=1)
