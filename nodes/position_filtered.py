@@ -13,14 +13,24 @@ class Filter():
 
     def __init__(self):
         rospy.init_node("position_filtered")
-        self.list = numpy.empty([50,3], dtype= Float64)
-        self.cnt = 0
-        self.firstLoop = 1
+        self.lol = 200
+        self.list_x = [0] * self.lol
+        self.list_y = [0] * self.lol
+        self.list_z = [0] * self.lol
+
+        self.cnt_x = 0
+        self.cnt_y = 0
+        self.cnt_z = 0
+
+        self.firstLoop_x = 1
+        self.firstLoop_y = 1
+        self.firstLoop_z = 1
+
         self.x = any
         self.y = any
         self.z = any
         self.position_pub = rospy.Publisher("afiltered_position",
-                                            Float64,
+                                            Point,
                                             queue_size=1)
 
     def run(self):
@@ -30,31 +40,79 @@ class Filter():
                                             Point,
                                             self.on_sub,
                                             queue_size=1)
-            pos = self.filterData(self.x)
-            self.position_pub.publish([self.x,self.y,self.z])
+            pos_x = self.filterData_x(self.x)
+            pos_y = self.filterData_y(self.y)
+            pos_z = self.filterData_z(self.z)
+            pointPosition = Point()
+            pointPosition.x = pos_x.data
+            pointPosition.y = pos_y.data
+            pointPosition.z = pos_z.data
+            self.position_pub.publish(pointPosition)
             rate.sleep()
 
     def on_sub(self, msg):
-        self.x = Float64(msg.x)
-        self.y = Float64(msg.y)
-        self.z = Float64(msg.z)
+        self.x = msg.x
+        self.y = msg.y
+        self.z = msg.z
 
-    def filterData(self, data):        
-        if self.cnt < 50:
-            self.list[self.cnt] = data
-            self.cnt += 1
+
+    
+    def filterData_x(self, data):
+        out = Float64()
+        out.data = data      
+        if self.cnt_x < self.lol:
+            self.list_x[self.cnt_x] = data
+            self.cnt_x += 1
         else:
-            if self.firstLoop != 0:
-                self.firstLoop = 0
-            self.cnt = 0
-            self.list[self.cnt] = data
-            self.cnt += 1
-        if self.firstLoop != 0:
-            return data
+            if self.firstLoop_x != 0:
+                self.firstLoop_x = 0
+            self.cnt_x = 0
+            self.list_x[self.cnt_x] = data
+            self.cnt_x += 1
+        if self.firstLoop_x != 0:
+            return out
         else:                     
             #sum/len
-            numpy.sum(self.list, dtype= Float64)
-            return data
+            out.data = sum(self.list_x) / len(self.list_x)
+            return out
+
+    def filterData_y(self, data):
+        out = Float64()
+        out.data = data      
+        if self.cnt_y < self.lol:
+            self.list_y[self.cnt_y] = data
+            self.cnt_y += 1
+        else:
+            if self.firstLoop_y != 0:
+                self.firstLoop_y = 0
+            self.cnt_y = 0
+            self.list_y[self.cnt_y] = data
+            self.cnt_y += 1
+        if self.firstLoop_y != 0:
+            return out
+        else:                     
+            #sum/len
+            out.data = sum(self.list_y) / len(self.list_y)
+            return out
+
+    def filterData_z(self, data):
+        out = Float64()
+        out.data = data      
+        if self.cnt_z < self.lol:
+            self.list_z[self.cnt_z] = data
+            self.cnt_z += 1
+        else:
+            if self.firstLoop_z != 0:
+                self.firstLoop_z = 0
+            self.cnt_z = 0
+            self.list_z[self.cnt_z] = data
+            self.cnt_z += 1
+        if self.firstLoop_z != 0:
+            return out
+        else:                     
+            #sum/len
+            out.data = sum(self.list_z) / len(self.list_z)
+            return out
         
 
 
