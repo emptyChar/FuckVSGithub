@@ -231,7 +231,7 @@ class CenterPosition():
         b = self.mult(self.q, a)
         ang = math.acos(b[0]) + math.asin(b[3])
         deg = Float64()
-        deg = ang*360/3.1415926536
+        deg = ang*360/(2*3.1415926536)
         return deg
 
 
