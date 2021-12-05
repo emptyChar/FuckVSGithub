@@ -13,8 +13,10 @@
     <!-- spawn tank and AprilTags -->
     <include file="$(find bluerov_sim)/launch/spawn_tank.launch"/>
     
+
     <group ns="$(arg vehicle_name)">
         <!-- spawn BlueROV model -->
+        
         <include file="$(find bluerov_sim)/launch/spawn_vehicle.launch">
             <arg name="x" value="$(arg x)" />
             <arg name="y" value="$(arg y)" />
@@ -24,6 +26,7 @@
             <arg name="Y" default="$(arg Y)" />
         </include>
 
+        
         <!--Our Range Sensor that publishes distances to anchors -->
         <include file="$(find bluerov_sim)/launch/range_sensor.launch"/>
 
@@ -31,8 +34,10 @@
         <node name="depth_calculator" pkg="autonomous_navigation" type="depth_calculator.py" />
         <node name="depth_estimator" pkg="autonomous_navigation" type="depth_estimator.py" />
         <node name="center_position" pkg="autonomous_navigation" type="center_position.py" />
-        <node name="distance_estimator" pkg="autonomous_navigation" type="dist_estimator.py" />
-        <node name="position_filtered" pkg="autonomous_navigation" type="position_filtered.py" />
+        <node name="distance_estimator" pkg="autonomous_navigation" type="dist_estimator.py" /> 
+        <node name="mixer" pkg="bluerov_sim" type="mixer.py" />        
+        <node name="keyboard" pkg="bluerov_sim" type="keyboard_control.py" />
+
     </group>
 
 </launch>

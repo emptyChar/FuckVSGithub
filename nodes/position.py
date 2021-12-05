@@ -17,7 +17,7 @@ class Trilateration():
         self.d3 = 0
         self.d4 = 0
        
-        self.distance_sub = rospy.Subscriber("ranges_filtered",
+        self.distance_sub = rospy.Subscriber("ranges",
                                              RangeMeasurementArray,
                                              self.on_sub,
                                              queue_size=1)
@@ -45,6 +45,8 @@ class Trilateration():
             self.d4 = self.d4
 
     def trilaterate3D(self, r1, r2, r3, r4):
+        
+
         # known points in 3D, change this based on measurements
         p1 = np.array([0.5, 3.36, -0.5])
         p2 = np.array([1.1, 3.35, -0.5])
