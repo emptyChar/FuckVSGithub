@@ -28,6 +28,7 @@
 
         
         <!--Our Range Sensor that publishes distances to anchors -->
+        <!--node name="keyboard" pkg="bluerov_sim" type="keyboard_control.py" -->
         <include file="$(find bluerov_sim)/launch/range_sensor.launch"/>
 
         <node name="localization" pkg="autonomous_navigation" type="position.py" />
@@ -35,9 +36,9 @@
         <node name="depth_estimator" pkg="autonomous_navigation" type="depth_estimator.py" />
         <node name="center_position" pkg="autonomous_navigation" type="center_position.py" />
         <node name="distance_estimator" pkg="autonomous_navigation" type="dist_estimator.py" /> 
-        <node name="mixer" pkg="bluerov_sim" type="mixer.py" />        
-        <node name="keyboard" pkg="bluerov_sim" type="keyboard_control.py" />
-
+        <node name="mixer" pkg="bluerov_sim" type="mixer.py" />  
+        <node name="controller" pkg="autonomous_navigation" type="controller.py" />      
+        
     </group>
 
 </launch>

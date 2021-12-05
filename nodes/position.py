@@ -46,17 +46,19 @@ class Trilateration():
 
     def trilaterate3D(self, r1, r2, r3, r4):
         # function to mitigate the effect of zeros in the measurments
-        distancesArr = [r1,r2,r3,r4]
-        if 0 in distancesArr:
-            positionOfZero = distancesArr.index(0)
-            cnt = 0
-            for i in 3:
-                if i != positionOfZero:
-                    distancesArr[cnt] = distancesArr[i]
-                    cnt += 1
-        r1 = distancesArr[0]
-        r2 = distancesArr[1]
-        r3 = distancesArr[2]
+
+        # distancesArr = [r1,r2,r3,r4]
+        # if 0 in distancesArr:
+        #     positionOfZero = distancesArr.index(0)
+        #     cnt = 0
+        #     for i in range(0, 4):
+        #         if i != positionOfZero:
+        #             distancesArr[cnt] = distancesArr[i]
+        #             cnt += 1
+        # r1 = distancesArr[0]
+        # r2 = distancesArr[1]
+        # r3 = distancesArr[2]
+        
         # this is the trilateration part
         # known points in 3D, change this based on measurements
         p1 = np.array([0.5, 3.36, -0.5])
@@ -77,10 +79,12 @@ class Trilateration():
         ans2 = p1+(x*e_x)+(y*e_y)+(z2*e_z)
         dist1 = np.linalg.norm(p4-ans1)
         dist2 = np.linalg.norm(p4-ans2)
-        if np.abs(r4-dist1) < np.abs(r4-dist2):
-            return ans1
-        else:
-            return ans2
+        
+        return ans1
+        # if np.abs(r4-dist1) < np.abs(r4-dist2):
+        #     return ans1
+        # else:
+        #     return ans2
 
     def run(self):
         rate = rospy.Rate(50)        
