@@ -45,8 +45,19 @@ class Trilateration():
             self.d4 = self.d4
 
     def trilaterate3D(self, r1, r2, r3, r4):
-        
-
+        # function to mitigate the effect of zeros in the measurments
+        distancesArr = [r1,r2,r3,r4]
+        if 0 in distancesArr:
+            positionOfZero = distancesArr.index(0)
+            cnt = 0
+            for i in 3:
+                if i != positionOfZero:
+                    distancesArr[cnt] = distancesArr[i]
+                    cnt += 1
+        r1 = distancesArr[0]
+        r2 = distancesArr[1]
+        r3 = distancesArr[2]
+        # this is the trilateration part
         # known points in 3D, change this based on measurements
         p1 = np.array([0.5, 3.36, -0.5])
         p2 = np.array([1.1, 3.35, -0.5])
