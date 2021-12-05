@@ -48,7 +48,7 @@ class Control():
 
         # For now, take ground truth x y coordinates instead
 
-        self.xy_sub = rospy.Subscriber("position",
+        self.xy_sub = rospy.Subscriber("noisy_position",
                                        Point,
                                        self.on_getxy,
                                        queue_size=1)
@@ -110,7 +110,7 @@ class Control():
                                               self.on_depthest,
                                               queue_size=1)
 
-            self.xy_sub = rospy.Subscriber("position",
+            self.xy_sub = rospy.Subscriber("noisy_position",
                                            Point,
                                            self.on_getxy,
                                            queue_size=1)

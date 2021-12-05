@@ -24,8 +24,8 @@ class Setpoint():
 
     def get_setpoint(self) -> Pose:
         posesp = Pose()
-        posesp.position.x = 5
-        posesp.position.y = 4
+        posesp.position.x = 0.5
+        posesp.position.y = 2
         posesp.position.z = -0.5
         posesp.orientation.w = 1  # math.cos(0.5*self.angle)
         posesp.orientation.x = 0
