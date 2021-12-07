@@ -36,8 +36,9 @@ class Trilateration():
 
     def on_sub_position(self, msg):
         f = 0.04
-        for x in [0,1,2,3]:
+        for u in [0,1,2,3]:            
             try:
+                x = msg.measurements[u].id - 1
                 if (self.d[x] - f) < msg.measurements[x].range < (self.d[x] + f):
                     self.d[x] = msg.measurements[x].range
                 else:
