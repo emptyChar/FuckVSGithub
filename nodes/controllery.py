@@ -27,10 +27,19 @@ class Control():
                                         self.on_sub,
                                         queue_size=1)
 
+        self.setpoint_sub = rospy.Subscriber("pose_setpoint",
+                                            Point,
+                                            self.on_sub_setpointy,
+                                            queue_size=1)
+
         # Publisher
         self.lateral_thrust_pub = rospy.Publisher("thrust",
                                                   Float64,
                                                   queue_size=1)
+
+    def on_sub_setpointy(self, msg): 
+        self.y_sp = msg.y
+        self.pidy.setpoint = self.y_sp
 
     def on_sub(self, msg):
         self.y = float(msg.y)

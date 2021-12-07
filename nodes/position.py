@@ -7,10 +7,11 @@ import math
 # get the distance to the 4 known markers and
 # calculates the position of the point
 
-#todo what happens if only two markers are seen
-#   why is it still sometimes giving out nan
-#   why the offset
-#   filter to get the peaks out
+
+
+#   todo what happens if only two markers are seen
+#   what happens if not enough markers are seen?
+#   fix for real world
 
 
 class Trilateration():
@@ -24,14 +25,16 @@ class Trilateration():
         self.z = -0.7
         self.distance_sub = rospy.Subscriber("ranges",
                                              RangeMeasurementArray,
-                                             self.on_sub,
+                                             self.on_sub_position,
                                              queue_size=1)
 
         self.position_pub = rospy.Publisher("noisy_position",
                                             Point,
                                             queue_size=1)
 
-    def on_sub(self, msg):
+       
+
+    def on_sub_position(self, msg):
         f = 0.04
         for x in [0,1,2,3]:
             try:

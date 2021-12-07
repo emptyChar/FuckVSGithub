@@ -5,64 +5,11 @@ from geometry_msgs.msg import Point
 from sensor_msgs.msg import Imu
 from std_msgs.msg import Float64
 
-# Node takes the estimates from  the  camera position
-# and converts them to an estimated center position of the
-# bluerov by taking quaternion for orientation from IMU
-
-# Subscribes to x,y,z of camera
-# Publishes x, y, z of robots center position
-
-# for quaternions in functions: [w, x, y, z]
-# but quaternions in ROS msgs:  [x, y, z, w]
+#todo rewrie with rospy.spin
 
 
-# Basic operations for quaternions:
-# def add(Q, R):
-#     return [q+r for q, r in zip(Q, R)]
 
 
-# def norm(Q):
-#     a = math.sqrt(sum(q*q for q in Q))
-#     return a
-
-
-# def smult(s, Q):
-#     a = [s*q for q in Q]
-#     return a
-
-
-# def normalize(q):
-#     qq = math.sqrt(q[0]*q[0] + q[3]*q[3])
-#     a = q[0]/qq
-#     b = q[3]/qq
-#     return [a, 0, 0, b]
-
-
-# def conj(q):
-#     a = q[0]
-#     b = -q[1]
-#     c = -q[2]
-#     d = -q[3]
-#     return [a, b, c, d]
-# add = lambda Q, R: [q+r for q, r in zip(Q, R)]
-# norm = lambda Q: math.sqrt(sum(q*q for q in Q))
-# smult = lambda s, Q: [s*q for q in Q]
-# normalize = lambda Q: smult(1/norm(Q), Q)
-# conj = lambda q: [q[0]] + [-q[i] for i in range(1, 4)]
-
-
-# def rotate(P, u, theta):
-#     Q = [math.cos(theta/2)]+smult(math.sin(theta/2), normalize(u))
-#     return mult(mult(Q, [0]+P), conj(Q))[1:]
-
-
-# def mult(Q, R):
-#     P = [0, 0, 0, 0]
-#     for i in range(4):
-#         for j in range(4):
-#             P[abs(i-j) if i*j == 0 or i == j else 6-i-j] \
-#                  += Q[i] * R[j] * (1 if i*j == 0 or i % 3+1 == j else -1)
-#     return P
 
 
 class CenterPosition():
@@ -127,25 +74,13 @@ class CenterPosition():
         # rate = rospy.Rate(60000)
         # rate.sleep()
         # calibration of IMU sensor before loop (zero is here)
-        rate = rospy.Rate(50)
-        while self.qi[0]*self.qi[0] < 0.1:
-            self.imu_sub = rospy.Subscriber("mavros/imu/data",
-                                            Imu,
-                                            self.on_imu_sub,
-                                            queue_size=1)
-            rate.sleep()
-
-        for i in range(40):
-            self.imu_sub = rospy.Subscriber("mavros/imu/data",
-                                            Imu,
-                                            self.on_imu_sub,
-                                            queue_size=1)
-
+               
+        for i in range(40):           
             self.q0[0] += self.q[0]
             self.q0[1] += self.q[1]
             self.q0[2] += self.q[2]
             self.q0[3] += self.q[3]
-            rate.sleep()
+            
         self.q0 = self.normalize(self.q0)
         a = self.conj(self.q0)
         b = self.mult(a, self.pinit)

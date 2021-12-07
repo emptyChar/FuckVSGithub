@@ -9,7 +9,7 @@ class DepthEstimator():
 
         # a rough guess how far above the center
         # the pressure sensor is located
-        self.sensor_height = 0.069
+        self.sensor_height = 0.0653
 
         self.mea = 0.0
         self.xk1 = -0.2

@@ -18,9 +18,9 @@ class Control():
         rospy.init_node("controllerx")
         self.x_sp = 1.0
                         
-        self.pidx = PID(0.1, 0.01, 0.1, setpoint=self.x_sp)
+        self.pidx = PID(1, 0.1, 0.05, setpoint=self.x_sp)
 
-        self.pidx.output_limits = (-1, 1)
+        self.pidx.output_limits = (-0.2, 0.2)
 
         # define variables
         self.x = 0.7  # x estimate
@@ -31,6 +31,11 @@ class Control():
                                         self.on_sub,
                                         queue_size=1)
 
+        self.setpoint_sub = rospy.Subscriber("pose_setpoint",
+                                            Point,
+                                            self.on_sub_setpointx,
+                                            queue_size=1)
+
         # Publisher
         self.thrust_pub = rospy.Publisher("lateral_thrust",
                                           Float64,
@@ -40,6 +45,9 @@ class Control():
     # on every subscription, assign the topics current value to a variable
     # that has been defined in __init__
 
+    def on_sub_setpointx(self, msg): 
+        self.x_sp = msg.x
+        self.pidx.setpoint = self.x_sp
 
     def on_sub(self, msg):   
         self.x = float(msg.x)
