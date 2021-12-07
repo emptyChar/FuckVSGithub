@@ -8,6 +8,7 @@ find_package(catkin REQUIRED COMPONENTS
   nav_msgs
   sensor_msgs
   bluerov_sim
+  
 )
 
 ## Compile as C++11, supported in ROS Kinetic and newer
@@ -169,7 +170,9 @@ catkin_install_python(PROGRAMS
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 catkin_install_python(PROGRAMS
-  nodes/controller.py
+  nodes/controllerx.py
+  nodes/controllery.py
+  nodes/controllerz.py
   nodes/depth_calculator.py
   nodes/depth_estimator.py
   nodes/pose_setpoint.py
