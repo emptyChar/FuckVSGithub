@@ -42,7 +42,8 @@
 
         <node name="controllerx" pkg="autonomous_navigation" type="controllerx.py" /> 
         <node name="controllery" pkg="autonomous_navigation" type="controllery.py" />
-        <node name="controllerz" pkg="autonomous_navigation" type="controllerz.py" />        
+        <node name="controllerz" pkg="autonomous_navigation" type="controllerz.py" />
+              
         <node name="mixer" pkg="bluerov_sim" type="mixer.py" />  
         
     </group>

@@ -5,7 +5,7 @@ from geometry_msgs.msg import Point
 from rospy.topics import Publisher
 from std_msgs.msg import Float64
 from simple_pid import PID
-
+from std_msgs.msg       import Int32
 # from nav_msgs.msg import Odometry
 
 
@@ -17,6 +17,7 @@ class Control():
     def __init__(self):
         rospy.init_node("controllerx")
         self.x_sp = 1.0
+        self.no_tag_detection = Int32(0)
                         
         self.pidx = PID(1, 0.1, 0.05, setpoint=self.x_sp)
 
@@ -29,6 +30,11 @@ class Control():
         self.xy_sub = rospy.Subscriber("noisy_position",
                                         Point,
                                         self.on_sub,
+                                        queue_size=1)
+
+        self.tag_sub = rospy.Subscriber("no_tag_detection_error",
+                                        Int32,  
+                                        self.on_sub_tag,                                      
                                         queue_size=1)
 
         self.setpoint_sub = rospy.Subscriber("pose_setpoint",
@@ -45,17 +51,20 @@ class Control():
     # on every subscription, assign the topics current value to a variable
     # that has been defined in __init__
 
+    def on_sub_tag(self, msg):
+        self.no_tag_detection = msg
+
     def on_sub_setpointx(self, msg): 
         self.x_sp = msg.x
         self.pidx.setpoint = self.x_sp
 
     def on_sub(self, msg):   
-        self.x = float(msg.x)
-
+        self.x = float(msg.x)        
         # Publish forward thrust
-        thrust = -self.pidx(self.x)
-        self.thrust_pub.publish(Float64(thrust))
- 
+        if self.no_tag_detection.data < 10:
+            thrust = -self.pidx(self.x)
+            self.thrust_pub.publish(Float64(thrust))
+
 
 
     def run(self):            

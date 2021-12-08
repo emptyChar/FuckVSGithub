@@ -4,14 +4,13 @@ import numpy as np
 from bluerov_sim.msg import RangeMeasurementArray
 from geometry_msgs.msg import Point
 import math
+from std_msgs.msg       import Int32
 # get the distance to the 4 known markers and
 # calculates the position of the point
 
 
 
-#   todo what happens if only two markers are seen
-#   what happens if not enough markers are seen?
-#   fix for real world
+
 
 
 class Trilateration():
@@ -23,6 +22,7 @@ class Trilateration():
         self.x = 0.7
         self.y = 2
         self.z = -0.7
+        self.counter_false = 0
         self.distance_sub = rospy.Subscriber("ranges",
                                              RangeMeasurementArray,
                                              self.on_sub_position,
@@ -31,21 +31,31 @@ class Trilateration():
         self.position_pub = rospy.Publisher("noisy_position",
                                             Point,
                                             queue_size=1)
+        
+        self.tag_pub = rospy.Publisher("no_tag_detection_error",
+                                            Int32,
+                                            queue_size=1)
 
        
 
     def on_sub_position(self, msg):
         f = 0.04
-        for u in [0,1,2,3]:            
-            try:
-                x = msg.measurements[u].id - 1
-                if (self.d[x] - f) < msg.measurements[x].range < (self.d[x] + f):
-                    self.d[x] = msg.measurements[x].range
-                else:
-                    self.d[x] += (msg.measurements[x].range - self.d[x]) / 4
-            except Exception:
-                self.d[x] = self.d[x]
-        
+        if len(msg.measurements) != 0 and len(msg.measurements) > 3:
+            self.counter_false = 0
+            self.tag_pub.publish(self.counter_false)
+            for u in range(len(msg.measurements)):            
+                try:
+                    x = msg.measurements[u].id - 1
+                    if (self.d[x] - f) < msg.measurements[x].range < (self.d[x] + f):
+                        self.d[x] = msg.measurements[x].range
+                    else:
+                        self.d[x] += (msg.measurements[x].range - self.d[x]) / 4
+                except Exception:
+                    self.d[u] = self.d[u]
+        else:
+            self.counter_false += 1        
+            self.tag_pub.publish(self.counter_false)
+
         p1 = np.array([0.5, 3.36, -0.5])
         p2 = np.array([1.1, 3.35, -0.5])
         p3 = np.array([0.5, 3.35, -0.9])

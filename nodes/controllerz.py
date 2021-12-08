@@ -5,11 +5,13 @@ from geometry_msgs.msg import Point
 from rospy.topics import Publisher
 from std_msgs.msg import Float64
 from simple_pid import PID
+from std_msgs.msg       import Int32
 
 class Control():
     def __init__(self):
         rospy.init_node("controllerz")        
         self.z_sp = -0.5   
+        self.no_tag_detection = Int32(0)
         self.pidz = PID(0.1, 0.01, 0.005, setpoint=self.z_sp)       
         self.pidz.output_limits = (-1, 1)        
         # define variables        
@@ -18,6 +20,11 @@ class Control():
         self.xy_sub = rospy.Subscriber("noisy_position",
                                         Point,
                                         self.on_sub,
+                                        queue_size=1)
+
+        self.tag_sub = rospy.Subscriber("no_tag_detection_error",
+                                        Int32,  
+                                        self.on_sub_tag,                                      
                                         queue_size=1)
 
         self.setpoint_sub = rospy.Subscriber("pose_setpoint",
@@ -30,6 +37,9 @@ class Control():
                                                   Float64,
                                                   queue_size=1)
 
+    def on_sub_tag(self, msg):
+        self.no_tag_detection = msg
+
     def on_sub_setpointz(self, msg): 
         self.z_sp = msg.z
         self.pidz.setpoint = self.z_sp
@@ -37,8 +47,9 @@ class Control():
     def on_sub(self, msg):
         self.z = float(msg.z)
         # Publish lateral thrust
-        lat = self.pidz(self.z)
-        self.vertical_thrust_pub.publish(Float64(lat))
+        if self.no_tag_detection.data < 10:
+            lat = self.pidz(self.z)
+            self.vertical_thrust_pub.publish(Float64(lat))
 
     def run(self):            
         while not rospy.is_shutdown():
