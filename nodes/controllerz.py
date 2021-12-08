@@ -12,8 +12,8 @@ class Control():
         rospy.init_node("controllerz")        
         self.z_sp = -0.5   
         self.no_tag_detection = Int32(0)
-        self.pidz = PID(0.1, 0.01, 0.005, setpoint=self.z_sp)       
-        self.pidz.output_limits = (-1, 1)        
+        self.pidz = PID(1, 0.09, 0.05, setpoint=self.z_sp)       
+        self.pidz.output_limits = (-0.2, 0.2)        
         # define variables        
         self.z = -0.7 # y estimate
 

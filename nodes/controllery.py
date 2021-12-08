@@ -18,8 +18,8 @@ class Control():
         rospy.init_node("controllery")        
         self.y_sp = 2.5        
         self.no_tag_detection = Int32(0)
-        self.pidy = PID(0.1, 0.01, 0.005, setpoint=self.y_sp)       
-        self.pidy.output_limits = (-1, 1)        
+        self.pidy = PID(1, 0.1, 0.05, setpoint=self.y_sp)       
+        self.pidy.output_limits = (-0.2, 0.2)        
         # define variables        
         self.y = 2.0  # y estimate
 

@@ -5,12 +5,6 @@ from geometry_msgs.msg import Point
 from sensor_msgs.msg import Imu
 from std_msgs.msg import Float64
 
-#todo rewrie with rospy.spin
-
-
-
-
-
 
 class CenterPosition():
     def __init__(self):
@@ -70,38 +64,6 @@ class CenterPosition():
         self.q[2] = 0
         self.q[3] = b
 
-    def run(self):
-        # rate = rospy.Rate(60000)
-        # rate.sleep()
-        # calibration of IMU sensor before loop (zero is here)
-               
-        for i in range(40):           
-            self.q0[0] += self.q[0]
-            self.q0[1] += self.q[1]
-            self.q0[2] += self.q[2]
-            self.q0[3] += self.q[3]
-            
-        self.q0 = self.normalize(self.q0)
-        a = self.conj(self.q0)
-        b = self.mult(a, self.pinit)
-        self.p0 = self.mult(b, self.q0)
-        while not rospy.is_shutdown():
-            self.campos_sub = rospy.Subscriber("noisy_position",
-                                               Point,
-                                               self.on_sub,
-                                               queue_size=1)
-
-            self.imu_sub = rospy.Subscriber("mavros/imu/data",
-                                            Imu,
-                                            self.on_imu_sub,
-                                            queue_size=1)
-
-            zenter = self.get_center(self.xc, self.yc, self.zc)
-            self.position_pub.publish(zenter)
-            angle = self.get_angle()
-            self.angle_pub.publish(angle)
-            rate.sleep()
-
     def normalize(self, q):
         qq = math.sqrt(q[0]*q[0] + q[3]*q[3])
         a = q[0]/qq
@@ -116,11 +78,7 @@ class CenterPosition():
         return [a, b, c, d]
 
     def mult(self, Q, R):
-        # P = [0, 0, 0, 0]
-        # for i in range(4):
-        #     for j in range(4):
-        #         P[abs(i-j) if i*j == 0 or i == j else 6-i-j] \
-        #             += Q[i] * R[j] * (1 if i*j == 0 or i % 3+1 == j else -1)
+
         a = Q[0]*R[0] - Q[1]*R[1] - Q[2]*R[2] - Q[3]*R[3]
         b = Q[0]*R[1] + Q[1]*R[0] + Q[2]*R[3] - Q[3]*R[2]
         c = Q[0]*R[2] - Q[1]*R[3] + Q[2]*R[0] + Q[3]*R[1]
@@ -136,38 +94,46 @@ class CenterPosition():
         zentrum.x = xc - ptrue[1]
         zentrum.y = yc - ptrue[2]
         zentrum.z = zc - ptrue[3]
-        return zentrum
-     
-    def euler_from_quaternion(self):
-        """
-        Convert a quaternion into euler angles (roll, pitch, yaw)
-        roll is rotation around x in radians (counterclockwise)
-        pitch is rotation around y in radians (counterclockwise)
-        yaw is rotation around z in radians (counterclockwise)
-        """
-        x, y, z, w = [self.q0, ]
-        t0 = +2.0 * (w * x + y * z)
-        t1 = +1.0 - 2.0 * (x * x + y * y)
-        roll_x = math.atan2(t0, t1)
-     
-        t2 = +2.0 * (w * y - z * x)
-        t2 = +1.0 if t2 > +1.0 else t2
-        t2 = -1.0 if t2 < -1.0 else t2
-        pitch_y = math.asin(t2)
-     
-        t3 = +2.0 * (w * z + x * y)
-        t4 = +1.0 - 2.0 * (y * y + z * z)
-        yaw_z = math.atan2(t3, t4)
-     
-        return roll_x, pitch_y, yaw_z # in radians
+        self.position_pub.publish(zentrum)
 
     def get_angle(self):
         a = self.conj(self.q0)
+        # print("hi")
         b = self.mult(self.q, a)
         ang = math.acos(b[0]) + math.asin(b[3])
         deg = Float64()
-        deg = ang*360/(2*3.1415926536)
-        return deg
+        deg = ang*180/3.1415926536
+        self.angle_pub.publish(deg)
+
+    def q_computation(self):
+        rate = rospy.Rate(50)
+        for i in range(40):
+            self.q0[0] += self.q[0]
+            self.q0[1] += self.q[1]
+            self.q0[2] += self.q[2]
+            self.q0[3] += self.q[3]
+            rate.sleep()
+        
+        self.q0 = self.normalize(self.q0)
+        a = self.conj(self.q0)
+        b = self.mult(a, self.pinit)
+        self.p0 = self.mult(b, self.q0)
+
+    def run(self):
+        # calibration of IMU sensor before loop (zero is here)
+        rate = rospy.Rate(50)
+        while self.qi[0]*self.qi[0] < 0.1:
+            self.imu_sub = rospy.Subscriber("mavros/imu/data",
+                                            Imu,
+                                            self.on_imu_sub,
+                                            queue_size=1)
+            rate.sleep()
+
+        self.q_computation()
+        while not rospy.is_shutdown():
+            self.get_center(self.xc, self.yc, self.zc)
+            self.get_angle()
+            rospy.spin
 
 
 def main():
