@@ -16,14 +16,14 @@ from std_msgs.msg       import Int32
 class Control():
     def __init__(self):
         rospy.init_node("controllery")        
-        self.y_sp = 2.5        
+        self.y_sp = 2.0        
         self.no_tag_detection = Int32(0)
         self.pidy = PID(1, 0.1, 0.05, setpoint=self.y_sp)       
-        self.pidy.output_limits = (-0.2, 0.2)        
+        self.pidy.output_limits = (-0.1, 0.1)        
         # define variables        
         self.y = 2.0  # y estimate
 
-        self.xy_sub = rospy.Subscriber("noisy_position",
+        self.xy_sub = rospy.Subscriber("position",
                                         Point,
                                         self.on_sub,
                                         queue_size=1)

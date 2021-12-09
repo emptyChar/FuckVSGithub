@@ -9,11 +9,11 @@ class Setpoint():
     def __init__(self):
         rospy.init_node("pose_setpoint")
         self.start_time = rospy.get_time()
-        self.sp_1 = np.array([0.4, 2, -0.5])
-        self.sp_2 = np.array([0.7, 2, -0.5])
-        self.sp_3 = np.array([0.7, 2, -0.9])
-        self.sp_4 = np.array([0.4, 2, -0.9])
-        # 20 = 40secs in real time
+        self.sp_1 = np.array([0.4, 1.5, -0.3])
+        self.sp_2 = np.array([0.7, 1.5, -0.3])
+        self.sp_3 = np.array([0.7, 1, -0.6])
+        self.sp_4 = np.array([0.4, 1, -0.6])
+        
         self.duration = 20.0
         self.count = 0
         self.setpoint = Point()

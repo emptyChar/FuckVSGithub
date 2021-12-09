@@ -36,11 +36,6 @@ class DepthEstimator():
             rate.sleep()
 
     def estimation(self):
-        self.depth_sub = rospy.Subscriber("depth",
-                                          Float64,
-                                          self.on_depth,
-                                          queue_size=1)
-
         # 1: xk = Axk1 + Bu + w -> xk = xk1 no velocity/accel.
         # New prediction is old value (assume nothing changes)
         xkest = self.xk1

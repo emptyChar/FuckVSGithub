@@ -4,7 +4,7 @@ import math
 from geometry_msgs.msg import Point
 from sensor_msgs.msg import Imu
 from std_msgs.msg import Float64
-
+from pyquaternion import Quaternion
 
 class CenterPosition():
     def __init__(self):
@@ -12,7 +12,7 @@ class CenterPosition():
         # define camera position relative to baseframe
         self.cx = 0.2
         self.cz = 0.1
-
+        
         self.xc = 0
         self.yc = 0
         self.zc = 0
@@ -99,10 +99,15 @@ class CenterPosition():
     def get_angle(self):
         a = self.conj(self.q0)
         # print("hi")
+        
         b = self.mult(self.q, a)
+        my_quaternion = Quaternion([b[0], 0, 0, b[3]])
+        theta = my_quaternion.degrees
         ang = math.acos(b[0]) + math.asin(b[3])
+        
         deg = Float64()
         deg = ang*180/3.1415926536
+        deg = theta
         self.angle_pub.publish(deg)
 
     def q_computation(self):
