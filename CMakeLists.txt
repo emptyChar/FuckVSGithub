@@ -8,7 +8,6 @@ find_package(catkin REQUIRED COMPONENTS
   nav_msgs
   sensor_msgs
   bluerov_sim
-  
 )
 
 ## Compile as C++11, supported in ROS Kinetic and newer
@@ -89,15 +88,18 @@ find_package(catkin REQUIRED)
 ##   * add a build_depend and a exec_depend tag for "dynamic_reconfigure"
 ## * In this file (CMakeLists.txt):
 ##   * add "dynamic_reconfigure" to
-##     find_package(catkin REQUIRED COMPONENTS ...)
+    #  find_package(catkin REQUIRED COMPONENTS 
+    #    rospy 
+    #    dynamic_reconfigure
+    #    std_msgs
+    #  )
 ##   * uncomment the "generate_dynamic_reconfigure_options" section below
 ##     and list every .cfg file to be processed
 
 ## Generate dynamic reconfigure parameters in the 'cfg' folder
-# generate_dynamic_reconfigure_options(
-#   cfg/DynReconf1.cfg
-#   cfg/DynReconf2.cfg
-# )
+generate_dynamic_reconfigure_options(
+  cfg/PidControlx.cfg
+)
 
 ###################################
 ## catkin specific configuration ##
@@ -170,16 +172,17 @@ catkin_install_python(PROGRAMS
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 catkin_install_python(PROGRAMS
+## nodes/controller.py
   nodes/controllerx.py
   nodes/controllery.py
   nodes/controllerz.py
-  nodes/depth_calculator.py
   nodes/depth_estimator.py
   nodes/pose_setpoint.py
   nodes/position.py
   nodes/center_position.py
   nodes/dist_estimator.py
   nodes/position_filtered.py
+  nodes/position_estimator.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
