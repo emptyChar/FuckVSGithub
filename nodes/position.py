@@ -67,7 +67,7 @@ class Trilateration():
         c2 = self.trilaterate3D(p1, p3, p4, self.d[0], self.d[2], self.d[3])
         d2 = self.trilaterate3D(p2, p3, p4, self.d[1], self.d[2], self.d[3])
 
-        sum_list_1 = [a + b for a, b in zip(a2, b2)]
+        sum_list_1 = [a + b for a, b in zip(a2, b2)]    
         sum_list_2 = [a + b for a, b in zip(c2, d2)]
 
         a3 = [x / 2 for x in sum_list_1]

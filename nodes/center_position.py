@@ -101,12 +101,8 @@ class CenterPosition():
         # print("hi")
         
         b = self.mult(self.q, a)
-        my_quaternion = Quaternion([b[0], 0, 0, b[3]])
-        theta = my_quaternion.degrees
-        ang = math.acos(b[0]) + math.asin(b[3])
-        
-        deg = Float64()
-        deg = ang*180/3.1415926536
+        my_quaternion = Quaternion([self.qi[0], 0, 0, self.qi[3]])
+        theta = my_quaternion.radians
         deg = theta
         self.angle_pub.publish(deg)
 

@@ -176,6 +176,7 @@ catkin_install_python(PROGRAMS
   nodes/controllerx.py
   nodes/controllery.py
   nodes/controllerz.py
+  nodes/controllerYaw.py
   nodes/depth_estimator.py
   nodes/pose_setpoint.py
   nodes/position.py
