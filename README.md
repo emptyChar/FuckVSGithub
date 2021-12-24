@@ -19,6 +19,6 @@ For the gesture-recognition package you have to:
   2. Pull the folder of the gesture-recognition project to the /src folder of you rproject (easier to have everything in one place)
   3. Run the recognize.py file going to its folder and writing "python3 recognize.py" You can also run separatedly each of the other two programs that are part of recognize.py
   4. For better results use a darker background and don't move the computer after callibration. For callibration don't appear on camera and keep everything still the first seconds of the program until the program confirms that the callibration was succesfull. 
-  5. The orginal package is https://github.com/Gogul09/gesture-recognition, but it needed some changes to work on my computer with the newst versions of so the uploaded version here is the fixed one and its working although it needs some improvements (for example the thumb is not easily counted as finger)
+  5. The orginal package is https://github.com/Gogul09/gesture-recognition, but it needed some changes to work on my computer with the newest versions of python and other packages, so the uploaded version here is the fixed one and its working although it needs some improvements (for example the thumb is not easily counted as finger)
 
 Other packages will be studied if the previous one is not good enough
