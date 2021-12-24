@@ -22,3 +22,4 @@ For the gesture-recognition package you have to:
   5. The orginal package is https://github.com/Gogul09/gesture-recognition, but it needed some changes to work on my computer with the newest versions of python and other packages, so the uploaded version here is the fixed one and its working although it needs some improvements (for example the thumb is not easily counted as finger)
 
 Other packages will be studied if the previous one is not good enough
+
