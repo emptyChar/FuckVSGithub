@@ -17,7 +17,7 @@ class Control():
         self.y = 2.0
         self.setYaw = self.calcAngle(self.x, self.y)
 
-        self.no_tag_detection = Int32(0)s
+        self.no_tag_detection = Int32(0)
         self.pidYaw = PID(1, 0.1, 0.05, setpoint=self.setYaw)
         self.pidYaw.output_limits = (-0.2, 0.2)
         # define variables
