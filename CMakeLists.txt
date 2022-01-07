@@ -173,8 +173,7 @@ catkin_install_python(PROGRAMS
 )
 catkin_install_python(PROGRAMS
 ## nodes/controller.py
-  nodes/controllerx.py
-  nodes/controllery.py
+  nodes/controllerxy.py  
   nodes/controllerz.py
   nodes/controllerYaw.py
   nodes/depth_estimator.py

@@ -31,7 +31,7 @@ class Trilateration():
 
     def on_sub_position(self, msg):
         pos = msg.pose.pose.position
-        
+
 
 
     def run(self):            
@@ -39,7 +39,7 @@ class Trilateration():
                 rospy.spin    
 
 def main():
-    tri = Trilateration    
+    tri = Trilateration()
     tri.run()
 
 

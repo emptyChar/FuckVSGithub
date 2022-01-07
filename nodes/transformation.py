@@ -12,7 +12,7 @@ from nav_msgs.msg import Odometry
 # calculates the position of the point
 
 
-class Trilateration():
+class Transformation():
 
     def __init__(self):
         rospy.init_node("localization")      
@@ -37,7 +37,8 @@ class Trilateration():
         transMarix = np.array([[math.cos(q.radians), math.sin(q.radians), 0],
                       [-math.sin(q.radians), math.cos(q.radians),0],
                       [0,0,1]])
-        localPosition = np.dot(transMarix,(-self.pos + self.set))
+        localPositionNP = np.dot(transMarix,(-self.pos + self.set))
+        localPosition = Point(localPositionNP[0], localPositionNP[1],localPositionNP[2])
         self.local_position_pub.publish(localPosition)
 
     
@@ -49,7 +50,7 @@ class Trilateration():
                 rospy.spin    
 
 def main():
-    tri = Trilateration    
+    tri = Transformation()   
     tri.run()
 
 
