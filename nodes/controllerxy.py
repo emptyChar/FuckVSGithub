@@ -15,6 +15,12 @@ from pyquaternion import Quaternion
 # publish: thrust, lateral thrust, vertical thrust, yaw
 
 
+#since the yaw in this case affects the direction in the global COS, the controller had to
+#account for that, thats why there is the cos/sin calculation in there
+#maybe my matrix is wrong
+#the Quaternion calculation is right, since it worked before in assignment 2, so don't check that
+#
+
 class Control():
     def __init__(self):
         rospy.init_node("controllerxy")        
