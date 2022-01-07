@@ -23,6 +23,8 @@ class Control():
         # define variables        
         self.y = 2.0  # y estimate
 
+        #rostopic echo /bluerov/ground_truth/state/pose/pose/position
+        
         self.xy_sub = rospy.Subscriber("position",
                                         Point,
                                         self.on_sub,

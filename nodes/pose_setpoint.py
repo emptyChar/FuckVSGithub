@@ -14,7 +14,7 @@ class Setpoint():
         self.sp_3 = np.array([0.7, 1, -0.6])
         self.sp_4 = np.array([0.4, 1, -0.6])
         
-        self.duration = 20.0
+        self.duration = 10.0
         self.count = 0
         self.setpoint = Point()
         self.setpoint_pub = rospy.Publisher("pose_setpoint",

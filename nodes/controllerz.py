@@ -4,6 +4,7 @@ import rospy
 from geometry_msgs.msg import Point
 # from rospy.topics import Publisher
 from std_msgs.msg import Float64
+from nav_msgs.msg import Odometry
 from simple_pid import PID
 from std_msgs.msg import Int32
 
@@ -18,8 +19,14 @@ class Control():
         # define variables
         self.z = -0.7   # y estimate
 
-        self.xy_sub = rospy.Subscriber("depth_estimate",
-                                       Float64,
+
+        #rostopic echo /bluerov/ground_truth/state/pose/pose/position
+        # to get the ground truth subscribe to /bluerov/ground_truth/state
+        # and then set self.z = msg.pose.pose.position.z
+
+
+        self.xy_sub = rospy.Subscriber("/bluerov/ground_truth/state",
+                                       Odometry,
                                        self.on_sub,
                                        queue_size=1)
 
@@ -46,7 +53,7 @@ class Control():
         self.pidz.setpoint = self.z_sp
 
     def on_sub(self, msg):
-        self.z = msg.data
+        self.z = msg.pose.pose.position.z
         # Publish lateral thrust
         if self.no_tag_detection.data < 10:
             lat = self.pidz(self.z)
