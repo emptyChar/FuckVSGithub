@@ -29,11 +29,7 @@ class Control():
                                        Odometry,
                                        self.on_sub,
                                        queue_size=1)
-
-        self.tag_sub = rospy.Subscriber("no_tag_detection_error",
-                                        Int32,
-                                        self.on_sub_tag,
-                                        queue_size=1)
+ 
 
         self.setpoint_sub = rospy.Subscriber("pose_setpoint",
                                              Point,
