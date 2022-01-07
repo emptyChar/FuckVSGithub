@@ -11,6 +11,9 @@ from nav_msgs.msg import Odometry
 # get the distance to the 4 known markers and
 # calculates the position of the point
 
+#code to transform the setpoint from the global COS into the local 
+# COS of the robot, just to test the controller in the simulation
+# for the following of the tag in the experiment
 
 class Transformation():
 
