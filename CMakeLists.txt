@@ -178,12 +178,10 @@ catkin_install_python(PROGRAMS
   nodes/controllerz.py
   nodes/controllerYaw.py
   nodes/depth_estimator.py
-  nodes/pose_setpoint.py
+  nodes/depth_calculator.py
+  nodes/pose_setpoint.py  
   nodes/position.py
-  nodes/center_position.py
-  nodes/dist_estimator.py
-  nodes/position_filtered.py
-  nodes/position_estimator.py
+  nodes/transformation.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
