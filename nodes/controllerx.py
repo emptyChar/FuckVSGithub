@@ -22,10 +22,12 @@ class Control():
         self.pidx = PID(1, 0.1, 0.05, setpoint=self.x_sp)
 
         self.pidx.output_limits = (-0.1, 0.1)
-
+        
         # define variables
         self.x = 0.7  # x estimate
- 
+
+        #ground truth
+        #rostopic echo /bluerov/ground_truth/state/pose/pose/position
 
         self.xy_sub = rospy.Subscriber("position",
                                         Point,
@@ -61,9 +63,9 @@ class Control():
     def on_sub(self, msg):   
         self.x = float(msg.x)        
         # Publish forward thrust
-        if self.no_tag_detection.data < 10:
-            thrust = -self.pidx(self.x)
-            self.thrust_pub.publish(Float64(thrust))
+        #if self.no_tag_detection.data < 10:
+        thrust = -self.pidx(self.x)
+        self.thrust_pub.publish(Float64(thrust))
 
 
 
