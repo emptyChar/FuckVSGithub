@@ -199,6 +199,7 @@ class Action():
         # write the whole thing more compact
         if self.is_following is True:
             self.is_following = False
+            self.follow_pub.publish(self.is_following)
         if self.is_ab is False:
             self.is_ab = True
         if self.is_a is False:
@@ -247,6 +248,7 @@ class Action():
     def action_5(self):
         self.is_active = True
         self.is_following = False
+        self.follow_pub.publish(self.is_following)
 
         # first delete the sp_list element, the list was initialized with
         # need to do that exactly one time
