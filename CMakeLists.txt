@@ -173,6 +173,7 @@ catkin_install_python(PROGRAMS
 )
 catkin_install_python(PROGRAMS
 ## nodes/controller.py
+  nodes/input.py 
   nodes/controllerxy.py  
   nodes/controllerz.py
   nodes/controllerYaw.py

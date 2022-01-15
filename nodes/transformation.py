@@ -36,7 +36,7 @@ class Transformation():
     
     def on_sub_position(self, msg):
         self.pos = np.array([msg.pose.pose.position.x, msg.pose.pose.position.y, msg.pose.pose.position.z])
-        q = Quaternion(msg.pose.pose.orientation.x, 0, 0, msg.pose.pose.orientation.w)
+        q = Quaternion([msg.pose.pose.orientation.z, 0, 0, msg.pose.pose.orientation.w])
         transMarix = np.array([[math.cos(q.radians), math.sin(q.radians), 0],
                       [-math.sin(q.radians), math.cos(q.radians),0],
                       [0,0,1]])

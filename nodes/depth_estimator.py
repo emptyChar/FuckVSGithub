@@ -29,7 +29,7 @@ class DepthEstimator():
         self.mea = msg.data
 
     def run(self):
-        r ate = rospy.Rate(50.0)
+        rate = rospy.Rate(50.0)
         while not rospy.is_shutdown():
             a = self.estimation()
             self.my_pub.publish(a)

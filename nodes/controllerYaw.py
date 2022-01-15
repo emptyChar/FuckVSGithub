@@ -10,14 +10,17 @@ from std_msgs.msg import Int32
 from nav_msgs.msg import Odometry
 from pyquaternion import Quaternion
 
+
+# controller so that the robot always faces the wall with the tags
+
 class Control():
     def __init__(self):
         rospy.init_node("controllerYaw")
 
-        self.pidYaw = PID(1, 0.1, 0.05, -math.pi / 4)
-        self.pidYaw.output_limits = (-0.1, 0.1)
+        self.pidYaw = PID(1, 0.1, 0.05, math.pi / 2)
+        
         # define variables
-        self.yaw = -math.pi / 2   
+        self.yaw = math.pi / 2   
 
         self.xy_sub = rospy.Subscriber("/bluerov/ground_truth/state",
                                        Odometry,
@@ -29,14 +32,19 @@ class Control():
                                         Float64,
                                         queue_size=1)
 
+        self.yaw_angle_pub = rospy.Publisher("yaw_angle",
+                                        Float64,
+                                        queue_size=1)
+
     def on_sub_tag(self, msg):
         self.no_tag_detection = msg
 
     def on_sub(self, msg):
-        q = Quaternion(msg.pose.pose.orientation.x, 0, 0, msg.pose.pose.orientation.w)
+        q = Quaternion([msg.pose.pose.orientation.z, 0, 0, msg.pose.pose.orientation.w])
         self.yaw = q.radians
-        yaw = self.pidYaw(self.yaw)
-        self.yaw_pub.publish(yaw)
+        yaw = -self.pidYaw(self.yaw)
+        self.yaw_angle_pub.publish(Float64(self.yaw))
+        self.yaw_pub.publish(Float64(yaw))
     
 
     def run(self):

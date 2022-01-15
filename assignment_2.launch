@@ -38,6 +38,8 @@
         <node name="controllery" pkg="autonomous_navigation" type="controllery.py" />
         <node name="controllerz" pkg="autonomous_navigation" type="controllerz.py" />
         <node name="controllerYaw" pkg="autonomous_navigation" type="controllerYaw.py" />
+
+        <node name="input" pkg="autonomous_navigation" type="input.py" />
         -->
        
         <include file="$(find bluerov_sim)/launch/range_sensor.launch"/>
@@ -47,9 +49,7 @@
         <node name="depth_calc" pkg="autonomous_navigation" type="depth_calculator.py" /> 
         <node name="depth_est" pkg="autonomous_navigation" type="depth_estimator.py" /> 
         
-        <node name="controllerxy" pkg="autonomous_navigation" type="controllerxy.py" /> 
-        
-        <node name="controllerz" pkg="autonomous_navigation" type="controllerz.py" />
+        <node name="keyboard" pkg="bluerov_sim" type="keyboard_control.py"/> 
         <node name="controllerYaw" pkg="autonomous_navigation" type="controllerYaw.py" />
 
         <node name="transformation" pkg="autonomous_navigation" type="transformation.py" />
