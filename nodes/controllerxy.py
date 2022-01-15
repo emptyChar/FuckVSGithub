@@ -66,9 +66,11 @@ class Control():
     def on_sub(self, msg):
         self.x = float(msg.pose.pose.position.x)
         self.y = float(msg.pose.pose.position.y)
+
         # Publish lateral 
         thrustK = self.pidx(self.x)
         latK = self.pidy(self.y)
+        #main bug here
         q = Quaternion(msg.pose.pose.orientation.x, 0, 0, msg.pose.pose.orientation.w)
         self.yaw = q.radians
         thrust = math.cos(self.yaw) * latK + math.sin(self.yaw) * thrustK

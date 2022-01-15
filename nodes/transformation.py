@@ -33,14 +33,16 @@ class Transformation():
         self.local_position_pub = rospy.Publisher("local_position",
                                             Point,
                                             queue_size=1)
-
+    
     def on_sub_position(self, msg):
         self.pos = np.array([msg.pose.pose.position.x, msg.pose.pose.position.y, msg.pose.pose.position.z])
         q = Quaternion(msg.pose.pose.orientation.x, 0, 0, msg.pose.pose.orientation.w)
         transMarix = np.array([[math.cos(q.radians), math.sin(q.radians), 0],
                       [-math.sin(q.radians), math.cos(q.radians),0],
                       [0,0,1]])
-        localPositionNP = np.dot(transMarix,(-self.pos + self.set))
+        localPositionNP = np.dot(transMarix,(-self.pos + self.set))        
+
+        #publish
         localPosition = Point(localPositionNP[0], localPositionNP[1],localPositionNP[2])
         self.local_position_pub.publish(localPosition)
 
