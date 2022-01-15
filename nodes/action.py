@@ -78,7 +78,7 @@ class Action():
 
         self.setpoint_pub = rospy.Publisher("position_setpoint",
                                             Point, queue_size=1)
-        self.action_sub = rospy.Subscriber("action_number", Int8,
+        self.action_sub = rospy.Subscriber("input", Int8,
                                            self.action_callback,
                                            self.setpoint_pub)
         self.pose_sub = rospy.Subscriber("/bluerov/ground_truth/state",
