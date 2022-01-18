@@ -28,11 +28,8 @@ class Trilateration():
                                             queue_size=1)
 
        
-
     def on_sub_position(self, msg):
         pos = msg.pose.pose.position
-
-
 
     def run(self):            
             while not rospy.is_shutdown():
