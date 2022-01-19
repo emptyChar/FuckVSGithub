@@ -34,8 +34,7 @@
 
         <node name="center_pos" pkg="autonomous_navigation" type="center_position.py" />
 
-        <node name="controllerx" pkg="autonomous_navigation" type="controllerx.py" /> 
-        <node name="controllery" pkg="autonomous_navigation" type="controllery.py" />
+        <node name="controllerxy" pkg="autonomous_navigation" type="controllerxy.py" /> 
         <node name="controllerz" pkg="autonomous_navigation" type="controllerz.py" />
         <node name="controllerYaw" pkg="autonomous_navigation" type="controllerYaw.py" />
 
@@ -50,8 +49,7 @@
         <node name="depth_est" pkg="autonomous_navigation" type="depth_estimator.py" /> 
         
         <node name="cameraDistance" pkg="autonomous_navigation" type="cameraDistance.py" />
-        <node name="controllerxy" pkg="autonomous_navigation" type="controllerxy.py" /> 
-        <node name="controllerz" pkg="autonomous_navigation" type="controllerz.py" />
+        <node name="controllerYaw" pkg="autonomous_navigation" type="controllerYaw.py" />
 
 
         <node name="mixer" pkg="bluerov_sim" type="mixer.py" />  

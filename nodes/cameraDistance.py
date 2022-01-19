@@ -2,6 +2,7 @@
 
 import rospy
 from geometry_msgs.msg import Point
+from std_msgs.msg       import Float64
 import numpy 
 import cv2
 import cv2.aruco as aruco
@@ -15,8 +16,12 @@ class CameraStuff():
     def __init__(self):
         rospy.init_node("cameraDistanceCalculator")
         
-        self.setpoint_pub = rospy.Publisher("markerPosition",
+        self.markerPoint_pub = rospy.Publisher("markerPosition",
                                             Point,
+                                            queue_size=1)
+
+        self.markerAngle_pub = rospy.Publisher("markerAngle",
+                                            Float64,
                                             queue_size=1)
         
     def cameraSetup(self):
@@ -25,7 +30,19 @@ class CameraStuff():
         #              [0 0 1]]
         #  dist = [-5.22501437e-02 6.52677120e-02 3.44177484e-04 6.00359927e-04 -4.38803770e-01]
 
-        # Check for camera calibration data
+
+
+
+        # cameraMatrix of the robot:
+        # [ 720.21893,    0.     ,  625.58763,
+        #     0.     ,  721.62171,  346.05134,
+        #     0.     ,    0.     ,    1.     ]
+
+        # distortionCoefficients of the robot:
+        # 0.009464, 0.016208, 0.001510, 0.001006 0.000000
+
+
+        # # Check for camera calibration data
         cameraMatrix = np.array([[702.50846734, 0, 408.0060], [0, 702.47748676, 305.01744135], [0,0,1]])
         distCoeffs = np.array([-5.22501437e-02, 6.52677120e-02, 3.44177484e-04, 6.00359927e-04, -4.38803770e-01])
 
@@ -38,7 +55,7 @@ class CameraStuff():
         board = aruco.GridBoard_create(
                 markersX=1,
                 markersY=1,
-                markerLength=0.09,
+                markerLength=0.1,
                 markerSeparation=0.01,
                 dictionary=ARUCO_DICT)
 
@@ -78,8 +95,8 @@ class CameraStuff():
                 try:
                     rvec, tvec, _objPoints = aruco.estimatePoseSingleMarkers(corners, 10, cameraMatrix, distCoeffs)                                        
                     cameraPosition = Point(tvec[0][0][0] * 0.01, tvec[0][0][1] * 0.01, tvec[0][0][2] * 0.01)
-                    self.setpoint_pub.publish(cameraPosition)
-                                                
+                    self.markerPoint_pub.publish(cameraPosition)
+                    self.markerAngle_pub.publish(Float64(rvec[0][0][2]))                     
                     cv2.putText(QueryImg, "%.1f X m -- %.0f deg" % ((tvec[0][0][0]) * 0.01, (rvec[0][0][2] / math.pi * 180)), (0, 10), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (244, 244, 244))
                     cv2.putText(QueryImg, "%.1f Y m -- %.0f deg" % ((tvec[0][0][1]) * 0.01, (rvec[0][0][2] / math.pi * 180)), (0, 50), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (244, 244, 244))
                     cv2.putText(QueryImg, "%.1f Z m -- %.0f deg" % ((tvec[0][0][2]) * 0.01, (rvec[0][0][2] / math.pi * 180)), (0, 90), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (244, 244, 244))
@@ -92,7 +109,8 @@ class CameraStuff():
                 cv2.imshow('QueryImage', QueryImg)
             else:
                 cameraPosition = Point(0, 0, 0.4)
-                self.setpoint_pub.publish(cameraPosition)
+                self.markerPoint_pub.publish(cameraPosition)
+                self.markerAngle_pub.publish(Float64(0))
 
             # Exit at the end of the video on the 'q' keypress
             if cv2.waitKey(1) & 0xFF == ord('q'):
