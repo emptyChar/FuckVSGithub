@@ -24,8 +24,8 @@ from pyquaternion import Quaternion
 class Control():
     def __init__(self):
         rospy.init_node("controllerxy")        
-        self.x_sp = 0.4
-        self.y_sp = 2.0        
+        self.x_sp = 0
+        self.y_sp = 0        
         
         self.pidx = PID(1, 0.1, 0.05, setpoint=self.x_sp)
         self.pidx.output_limits = (-0.1, 0.1)
@@ -37,15 +37,16 @@ class Control():
 
         #rostopic echo /bluerov/ground_truth/state/pose/pose/position
         
-        self.xy_sub = rospy.Subscriber("/bluerov/ground_truth/state",
-                                       Odometry,
-                                       self.on_sub,
-                                       queue_size=1)
+        # self.xy_sub = rospy.Subscriber("/bluerov/ground_truth/state",
+        #                                Odometry,
+        #                                self.on_sub,
+        #                                queue_size=1)
 
-        self.setpoint_sub = rospy.Subscriber("pose_setpoint",
-                                            Point,
-                                            self.on_sub_setpoint,
-                                            queue_size=1)
+        self.xy_sub_marker = rospy.Subscriber("markerPosition",
+                                       Point,
+                                       self.on_sub_marker,
+                                       queue_size=1)
+                             
 
         # Publisher
         self.thrust_pub = rospy.Publisher("lateral_thrust",
@@ -56,12 +57,13 @@ class Control():
                                                   Float64,
                                                   queue_size=1)
     
-
-    def on_sub_setpoint(self, msg): 
-        self.x_sp = msg.x 
-        self.pidx.setpoint = self.x_sp
-        self.y_sp = msg.y - 0.4
-        self.pidy.setpoint = self.y_sp
+    def on_sub_marker(self, msg):
+        self.x = msg.x
+        self.y = msg.y
+        thrust = self.pidx(self.x)
+        lat = self.pidy(self.y)
+        self.thrust_pub.publish(Float64(thrust))
+        self.lateral_thrust_pub.publish(Float64(lat))
 
     def on_sub(self, msg):
         self.x = float(msg.pose.pose.position.x)
