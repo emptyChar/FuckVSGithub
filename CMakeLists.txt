@@ -173,6 +173,9 @@ catkin_install_python(PROGRAMS
 )
 catkin_install_python(PROGRAMS
 ## nodes/controller.py
+  nodes/finger_test.py
+  nodes/fingerCounter.py
+  nodes/handTrackingModule.py
   nodes/cameraDistance.py 
   nodes/input.py 
   nodes/controllerxy.py  
