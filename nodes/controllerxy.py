@@ -25,7 +25,8 @@ class Control():
     def __init__(self):
         rospy.init_node("controllerxy")        
         self.x_sp = 0
-        self.y_sp = 0        
+        self.y_sp = 0  
+        self.action = 0      
         
         self.pidx = PID(1, 0.1, 0.05, setpoint=self.x_sp)
         self.pidx.output_limits = (-0.1, 0.1)
@@ -37,10 +38,10 @@ class Control():
 
         #rostopic echo /bluerov/ground_truth/state/pose/pose/position
         
-        # self.xy_sub = rospy.Subscriber("/bluerov/ground_truth/state",
-        #                                Odometry,
-        #                                self.on_sub,
-        #                                queue_size=1)
+        self.xy_sub = rospy.Subscriber("/bluerov/ground_truth/state",
+                                       Odometry,
+                                       self.on_sub,
+                                       queue_size=1)
 
         self.xy_sub_marker = rospy.Subscriber("markerPosition",
                                        Point,
@@ -58,27 +59,29 @@ class Control():
                                                   queue_size=1)
     
     def on_sub_marker(self, msg):
-        self.x = msg.x
-        self.y = msg.y
-        thrust = self.pidx(self.x)
-        lat = self.pidy(self.y)
-        self.thrust_pub.publish(Float64(thrust))
-        self.lateral_thrust_pub.publish(Float64(lat))
+        if self.action == 0:
+            self.x = msg.x
+            self.y = msg.y
+            thrust = self.pidx(self.x)
+            lat = self.pidy(self.y)
+            self.thrust_pub.publish(Float64(thrust))
+            self.lateral_thrust_pub.publish(Float64(lat))
 
     def on_sub(self, msg):
-        self.x = float(msg.pose.pose.position.x)
-        self.y = float(msg.pose.pose.position.y)
+        if self.action != 0:
+            self.x = float(msg.pose.pose.position.x)
+            self.y = float(msg.pose.pose.position.y)
 
-        # Publish lateral 
-        thrustK = self.pidx(self.x)
-        latK = self.pidy(self.y)
-        #main bug here
-        q = Quaternion(msg.pose.pose.orientation.x, 0, 0, msg.pose.pose.orientation.w)
-        self.yaw = q.radians
-        thrust = math.cos(self.yaw) * latK + math.sin(self.yaw) * thrustK
-        lat    =-math.sin(self.yaw) * latK + math.cos(self.yaw) * thrustK
-        self.thrust_pub.publish(Float64(thrust))
-        self.lateral_thrust_pub.publish(Float64(lat))
+            # Publish lateral 
+            thrustK = self.pidx(self.x)
+            latK = self.pidy(self.y)
+            #main bug here
+            q = Quaternion(msg.pose.pose.orientation.x, 0, 0, msg.pose.pose.orientation.w)
+            self.yaw = q.radians
+            thrust = math.cos(self.yaw) * latK + math.sin(self.yaw) * thrustK
+            lat    =-math.sin(self.yaw) * latK + math.cos(self.yaw) * thrustK
+            self.thrust_pub.publish(Float64(thrust))
+            self.lateral_thrust_pub.publish(Float64(lat))
 
     def run(self):            
         while not rospy.is_shutdown():

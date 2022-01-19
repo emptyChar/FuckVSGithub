@@ -12,6 +12,7 @@ from std_msgs.msg import Int32
 class Control():
     def __init__(self):
         rospy.init_node("controllerz")
+        self.action = 0
         self.z_sp = 0.4
         self.no_tag_detection = Int32(0)
         self.pidz = PID(1, 0.1, 0.05, setpoint=self.z_sp)
@@ -25,10 +26,10 @@ class Control():
         # and then set self.z = msg.pose.pose.position.z
 
 
-        # self.xy_sub = rospy.Subscriber("/bluerov/ground_truth/state",
-        #                                Odometry,
-        #                                self.on_sub,
-        #                                queue_size=1)
+        self.xy_sub = rospy.Subscriber("/bluerov/ground_truth/state",
+                                       Odometry,
+                                       self.on_sub,
+                                       queue_size=1)
 
 
         self.xy_sub_marker = rospy.Subscriber("markerPosition",
@@ -42,16 +43,18 @@ class Control():
                                                    queue_size=1)
 
     def on_sub_marker(self, msg):
-        self.z = msg.z        
-        lat = self.pidz(self.z)
-        self.vertical_thrust_pub.publish(Float64(lat))
-        
-    def on_sub(self, msg):
-        self.z = msg.pose.pose.position.z
-        # Publish lateral thrust
-        if self.no_tag_detection.data < 10:
+        if self.action == 0:
+            self.z = msg.z        
             lat = self.pidz(self.z)
             self.vertical_thrust_pub.publish(Float64(lat))
+            
+    def on_sub(self, msg):
+        if self.action != 0:
+            self.z = msg.pose.pose.position.z
+            # Publish lateral thrust
+            if self.no_tag_detection.data < 10:
+                lat = self.pidz(self.z)
+                self.vertical_thrust_pub.publish(Float64(lat))
 
     def run(self):
         while not rospy.is_shutdown():
