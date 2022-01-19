@@ -5,7 +5,7 @@ from geometry_msgs.msg import Point
 from std_msgs.msg       import Float64
 import numpy 
 import cv2
-import cv2.aruco as aruco
+import cv2.ruco as aruco
 import os
 import numpy as np
 import math
