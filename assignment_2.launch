@@ -42,15 +42,10 @@
         -->
        
         <include file="$(find bluerov_sim)/launch/range_sensor.launch"/>
-
-        <node name="setpoint" pkg="autonomous_navigation" type="pose_setpoint.py" /> 
-
         <node name="depth_calc" pkg="autonomous_navigation" type="depth_calculator.py" /> 
         <node name="depth_est" pkg="autonomous_navigation" type="depth_estimator.py" /> 
         
-        <node name="cameraDistance" pkg="autonomous_navigation" type="cameraDistance.py" />
-        <node name="controllerYaw" pkg="autonomous_navigation" type="controllerYaw.py" />
-
+        <node name="fingerCounter" pkg="autonomous_navigation" type="fingerCounter.py" />
 
         <node name="mixer" pkg="bluerov_sim" type="mixer.py" />  
         
