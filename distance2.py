@@ -3,6 +3,7 @@ import cv2
 import cv2.aruco as aruco
 import os
 import numpy as np
+import math
 
 #cameraMatrix = [[702.50846734 0 408.0060]
 #               [0 702.47748676 305.01744135]
@@ -20,8 +21,8 @@ ARUCO_DICT = aruco.Dictionary_get(aruco.DICT_4X4_1000)
 
 # Create grid board object we're using in our stream
 board = aruco.GridBoard_create(
-        markersX=2,
-        markersY=2,
+        markersX=1,
+        markersY=1,
         markerLength=0.09,
         markerSeparation=0.01,
         dictionary=ARUCO_DICT)
@@ -30,7 +31,7 @@ board = aruco.GridBoard_create(
 rvecs, tvecs = None, None
 
 cam = cv2.VideoCapture("v4l2src device=/dev/video0 ! video/x-raw,format=YUY2,width=640,height=480,framerate=30/1 ! videoconvert ! video/x-raw, format=BGR ! appsink drop=1 ", cv2.CAP_GSTREAMER)
-
+cam.set(cv2.CAP_PROP_AUTOFOCUS, 0)
 
 while(cam.isOpened()):
     # Capturing each frame of our video stream
@@ -58,13 +59,19 @@ while(cam.isOpened()):
 
     if ids is not None:
         try:
-            rvec, tvec, _objPoints = aruco.estimatePoseSingleMarkers(corners, 10.5, cameraMatrix, distCoeffs)                                           
+            rvec, tvec, _objPoints = aruco.estimatePoseSingleMarkers(corners, 10, cameraMatrix, distCoeffs)    
+            
+                                               
+            cv2.putText(QueryImg, "%.1f X cm -- %.0f deg" % ((tvec[0][0][0]), (rvec[0][0][2] / math.pi * 180)), (0, 30), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (244, 244, 244))
+            cv2.putText(QueryImg, "%.1f Y cm -- %.0f deg" % ((tvec[0][0][1]), (rvec[0][0][2] / math.pi * 180)), (0, 70), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (244, 244, 244))
+            cv2.putText(QueryImg, "%.1f Z cm -- %.0f deg" % ((tvec[0][0][2]), (rvec[0][0][2] / math.pi * 180)), (0, 110), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (244, 244, 244))
             QueryImg = aruco.drawAxis(QueryImg, cameraMatrix, distCoeffs, rvec, tvec, 5)           
         except:
-            print("Deu merda segue o baile")
+            print("Something in try didn't work")
 
-
+        
         cv2.imshow('QueryImage', QueryImg)
+        
 
     # Exit at the end of the video on the 'q' keypress
     if cv2.waitKey(1) & 0xFF == ord('q'):
