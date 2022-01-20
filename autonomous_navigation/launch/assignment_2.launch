@@ -1,0 +1,72 @@
+<launch>
+    <arg name="vehicle_name" default="bluerov" />
+    <!-- Vehicle spawn position so that tags are seen -->
+    <arg name="x" default="0.7" />
+    <arg name="y" default="2.0" />
+    <arg name="z" default="-0.7" />
+    <arg name="P" default="0.0" />
+    <arg name="R" default="0.0" />
+    <arg name="Y" default="1.57" />
+
+    <arg name="camera" default="false" />
+
+    <include file="$(find bluerov_sim)/launch/gazebo_base.launch" />
+
+    <!-- spawn tank and AprilTags -->
+    <include file="$(find bluerov_sim)/launch/spawn_tank.launch"/>
+    
+
+    <group ns="$(arg vehicle_name)">
+        <!-- spawn BlueROV model -->
+        
+        <include file="$(find bluerov_sim)/launch/spawn_vehicle.launch">
+            <arg name="camera" value="$(arg camera)" />
+            <arg name="x" value="$(arg x)" />
+            <arg name="y" value="$(arg y)" />
+            <arg name="z" value="$(arg z)" />
+            <arg name="R" default="$(arg R)" />
+            <arg name="P" default="$(arg P)" />
+            <arg name="Y" default="$(arg Y)" />
+        </include>
+        <!-- Launch the Range Sensor Plugin -->
+        <include file="$(find bluerov_sim)/launch/range_sensor.launch"/>
+        
+        <!-- Controllers -->
+        <node name="keyboard" pkg="bluerov_sim" type="keyboard_control.py"/> 
+
+
+        <!-- Finger Counter -->
+        <node name="fingerCounter" pkg="autonomous_navigation" type="FingerCounter.py"/>
+        
+        
+        
+        <!-- others -->
+        <node name="mixer" pkg="bluerov_sim" type="mixer.py" />  
+        
+
+        <!-- <node name="new_tag" pkg="gazebo_ros" type="spawn_model"
+            args="-sdf -file $(find bluerov_sim)/models/tag36_11_00002/model.sdf
+                -model tag_2
+                -x 0.7 -y 1.0 -z -0.5
+                -R 0.0 -P -1.57 -Y -1.57" /> -->
+
+        <!--Our Range Sensor that publishes distances to anchors />      
+        <node name="keyboard" pkg="bluerov_sim" type="keyboard_control.py"/> 
+        <node name="localization" pkg="autonomous_navigation" type="position.py" />
+        <node name="center_pos" pkg="autonomous_navigation" type="center_position.py" />
+        <node name="controllerx" pkg="autonomous_navigation" type="controllerx.py" /> 
+        <node name="controllery" pkg="autonomous_navigation" type="controllery.py" />
+        <node name="controllerz" pkg="autonomous_navigation" type="controllerz.py" />
+        <node name="controllerYaw" pkg="autonomous_navigation" type="controllerYaw.py" />
+        <node name="input" pkg="autonomous_navigation" type="input.py" />
+        <node name="transformation" pkg="autonomous_navigation" type="transformation.py" />
+        <node name="test_action" pkg="autonomous_navigation" type="test_input.py" />
+        <node name="setpoint" pkg="autonomous_navigation" type="pose_setpoint.py" />
+        <node name="depth_calc" pkg="autonomous_navigation" type="depth_calculator.py" /> 
+        <node name="depth_est" pkg="autonomous_navigation" type="depth_estimator.py" />
+        <include file="$(find autonomous_navigation)/launch/check_tag_position.launch"/>
+        <node name="tag_position" pkg="autonomous_navigation" type="tag_position.py"/> 
+        -->
+    </group>
+
+</launch>
