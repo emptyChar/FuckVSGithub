@@ -6,11 +6,8 @@ from geometry_msgs.msg import Point
 from std_msgs.msg       import Float64
 import numpy 
 import cv2
-<<<<<<< HEAD
-from cv2 import aruco
-=======
 import cv2.aruco as aruco
->>>>>>> 5d068ad0a22ca8c48a740a237ee349bccac79f8f
+
 import os
 import numpy as np
 import math
