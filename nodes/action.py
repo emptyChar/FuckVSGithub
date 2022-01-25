@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import rospy
 from std_msgs.msg import Int8
+from std_msgs.msg import Bool
 from geometry_msgs.msg import Point
 from nav_msgs.msg import Odometry
 import math
@@ -34,6 +35,8 @@ class Action():
         self.is_a = False
         self.is_down = True
         self.is_tag_visible = False
+
+        self.already_done = False
 
         self.t = 0
         self.old_time = 0
@@ -73,18 +76,29 @@ class Action():
         self.sp_b.y = 2
         self.sp_b.z = -0.7
         self.sp_list = [self.sp_a, self.sp_b]
+        self.sp_list.pop
 
         self.start_time = rospy.get_time()
 
         self.setpoint_pub = rospy.Publisher("position_setpoint",
                                             Point, queue_size=1)
-        self.action_sub = rospy.Subscriber("input", Int8,
+        self.follow_pub = rospy.Publisher("is_following",
+                                          Bool, queue_size=1)
+        self.action_sub = rospy.Subscriber("fingercounter", Int8,
                                            self.action_callback,
                                            self.setpoint_pub)
         self.pose_sub = rospy.Subscriber("/bluerov/ground_truth/state",
                                          Odometry,
                                          self.pose_callback,
                                          queue_size=1)
+
+        # Publisher for debugging purposes:
+        self.finger_pub = rospy.Publisher("debug_finger_read",
+                                          Int8,
+                                          queue_size=1)
+        self.active_pub = rospy.Publisher("debug_is_active",
+                                          Bool,
+                                          queue_size=1)
 
     def run(self):
         # might need to add to the runfunction the ongoing action
@@ -100,6 +114,15 @@ class Action():
     def action_callback(self, msg, publisher):
         # before taking any new action, first check wether or not there
         # is an active action
+        # isact = Bool()
+        # isact = self.is_active
+        # self.active_pub.publish(isact)
+
+        # # debug: setpoint (doesnt work..)
+        # self.setpoint.x = self.setpoint_a.x
+        # self.setpoint.y = self.setpoint_a.y
+        # self.setpoint.z = self.setpoint_a.z
+        # self.setpoint_pub.publish(self.setpoint)
 
         if self.is_active is False:
             # take in a published message that contains an integer number 1-5
@@ -126,23 +149,40 @@ class Action():
                 self.counter = [0, 0, 0, 0, 0, 0]
                 self.total_counter = 0
 
+                # Debug Publishing of finger count:
+                acti = Int8()
+                acti = actio
+                self.finger_pub.publish(acti)
+
+                # if actio == 1:
+                #     self.action_1()
+                # elif actio == 2:
+                #     self.action_2()
+                # elif actio == 3:
+                #     self.action_3()
+                # elif actio == 4:
+                #     self.action_4()
+                # elif actio == 5:
+                #     self.action_5()
+                # else:
+                #     self.action_0()
+
+                if actio == 0:
+                    self.action_0()
+
+                if actio == 2:
+                    self.action_2()
+
                 if actio == 1:
-                    self.setpoint = self.action_1
-                elif actio == 2:
-                    self.setpoint = self.action_2
-                elif actio == 3:
-                    self.setpoint = self.action_3
-                elif actio == 4:
-                    self.setpoint = self.action_4
-                elif actio == 5:
-                    self.setpoint = self.action_5
-                else:
-                    self.setpoint = self.action_0
+                    self.action_1()
+                
 
                 # here it might be needed to define an ongoing setpoint
                 # following after action is over
+                follo = Bool()
+                follo = self.is_following
+                self.follow_pub.publish(follo)
 
-                self.setpoint_pub.publish(self.setpoint)
 
 # ACTIONS #####################################################################
 
@@ -151,19 +191,17 @@ class Action():
 
         # standard following procedure, keep position
         # relative to diver
-        sp = Point
-        sp.x = 0.7
-        sp.y = 2
-        sp.z = -0.7
-        self.setpoint_pub.publish(sp)
+        self.is_following = True
 
     def action_1(self):
         # safe position A
 
-        if self.is_following is False:
-            a = 0
-        else:
+        if self.is_following is True:
             self.is_active = True
+
+            isact = Bool()
+            isact = self.is_active
+            self.active_pub.publish(isact)
 
             self.setpoint_a.x = self.x
             self.setpoint_a.y = self.y
@@ -176,135 +214,124 @@ class Action():
         self.is_active = False
 
     def action_2(self):
-        # safe position B
+        self.is_following = False
+    #     # safe position B
 
-        if self.is_following is False:
-            a = 0
-        else:
-            self.is_active = True
+    #     if self.is_following is True:
+    #         self.is_active = True
 
-            self.setpoint_b.x = self.x
-            self.setpoint_b.y = self.y
-            self.setpoint_b.z = self.z
+    #         self.setpoint_b.x = self.x
+    #         self.setpoint_b.y = self.y
+    #         self.setpoint_b.z = self.z
 
-        # wait 4 secs before rdy for next action
-        waiting = rospy.Rate(4000.0)
-        waiting.sleep()
+    #     # wait 4 secs before rdy for next action
+    #     waiting = rospy.Rate(4000.0)
+    #     waiting.sleep()
 
-        self.is_active = False
+    #     self.is_active = False
 
-    def action_3(self):
-        # switch between positions A <-> B
-        self.is_active = True
+    # def action_3(self):
+    #     # switch between positions A <-> B
+    #     self.is_active = True
 
-        # # following mode: switch following off switch is AB on
-        # if self.is_following is True:
-        #     self.is_following = False
-        #     self.is_ab = True
-        #     if self.is_a is False:
-        #         self.is_a = True
-        #         self.setpoint.x = self.setpoint_a.x
-        #         self.setpoint.y = self.setpoint_a.y
-        #         self.setpoint.z = self.setpoint_a.z
-        #     else:
-        #         self.is_a = False
-        #         self.setpoint.x = self.setpoint_b.x
-        #         self.setpoint.y = self.setpoint_b.y
-        #         self.setpoint.z = self.setpoint_b.z
-        # elif self.is_ab is True:
-        #     # state here what should happen when bluerov is already
-        #     # moving between A and B
-        #     if self.is_a is False:
-        #         self.is_a = True
-        #         self.setpoint.x = self.setpoint_a.x
-        #         self.setpoint.y = self.setpoint_a.y
-        #         self.setpoint.z = self.setpoint_a.z
-        #     else:
-        #         self.is_a = False
-        #         self.setpoint.x = self.setpoint_b.x
-        #         self.setpoint.y = self.setpoint_b.y
-        #         self.setpoint.z = self.setpoint_b.z
-        # else:
-        #     # else meaning bluerov is in up or down position
-        #     self.is_ab = True
-        #     if self.is_a is False:
-        #         self.is_a = True
-        #         self.setpoint.x = self.setpoint_a.x
-        #         self.setpoint.y = self.setpoint_a.y
-        #         self.setpoint.z = self.setpoint_a.z
-        #     else:
-        #         self.is_a = False
-        #         self.setpoint.x = self.setpoint_b.x
-        #         self.setpoint.y = self.setpoint_b.y
-        #         self.setpoint.z = self.setpoint_b.z
+    #     # following mode: switch following off switch is AB on
+    #     if self.is_following is True:
+    #         self.is_following = False
+    #     if self.is_ab is False:
+    #         self.is_ab = True
+    #     if self.is_a is False:
+    #         self.is_a = True
+    #         self.setpoint.x = self.setpoint_a.x
+    #         self.setpoint.y = self.setpoint_a.y
+    #         self.setpoint.z = self.setpoint_a.z
+    #         dist_to_sp = math.sqrt((self.setpoint.x - self.x)**2
+    #                                + (self.setpoint.y - self.y)**2
+    #                                + (self.setpoint.z - self.z)**2)
+    #         while dist_to_sp < 0.05:
+    #             # when its close to its destination it shouldnt stop
+    #             # publishing the setpoints but it should lose the"active"status
 
-        # write the whole thing more compact
-        if self.is_following is True:
-            self.is_following = False
-        if self.is_ab is False:
-            self.is_ab = True
-        if self.is_a is False:
-            self.is_a = True
-            self.setpoint.x = self.setpoint_a.x
-            self.setpoint.y = self.setpoint_a.y
-            self.setpoint.z = self.setpoint_a.z
-            dist_to_sp = math.sqrt((self.setpoint.x - self.x)**2
-                                   + (self.setpoint.y - self.y)**2
-                                   + (self.setpoint.z - self.z)**2)
-            while dist_to_sp < 0.05:
-                # when its close to its destination it shouldnt stop
-                # publishing the setpoints but it should lose the"active"status
+    #             self.setpoint_pub.publish(self.setpoint)
+    #             # How to publish same setpoints afterwards?
+    #     else:
+    #         self.is_a = False
+    #         self.setpoint.x = self.setpoint_b.x
+    #         self.setpoint.y = self.setpoint_b.y
+    #         self.setpoint.z = self.setpoint_b.z
+    #         dist_to_sp = math.sqrt((self.setpoint.x - self.x)**2
+    #                                + (self.setpoint.y - self.y)**2
+    #                                + (self.setpoint.z - self.z)**2)
+    #         while dist_to_sp < 0.05:
+    #             self.setpoint_pub.publish(self.setpoint)
 
-                self.setpoint_pub.publish(self.setpoint)
-                # How to publish same setpoints afterwards?
-        else:
-            self.is_a = False
-            self.setpoint.x = self.setpoint_b.x
-            self.setpoint.y = self.setpoint_b.y
-            self.setpoint.z = self.setpoint_b.z
-            dist_to_sp = math.sqrt((self.setpoint.x - self.x)**2
-                                   + (self.setpoint.y - self.y)**2
-                                   + (self.setpoint.z - self.z)**2)
-            while dist_to_sp < 0.05:
-                self.setpoint_pub.publish(self.setpoint)
+    #     self.is_active = False
 
+    # def action_4(self):
+    #     # safe a position to the list
 
+    #     self.is_active = True
+    #     sp = Point
+    #     sp.x = self.x
+    #     sp.y = self.y
+    #     sp.z = self.z
+    #     self.sp_list.insert(0, sp)
+    #     if len(self.sp_list) > 16:
+    #         # keep list short in case too many sp stored
+    #         self.sp_list.pop()
+    #     waiting = rospy.Rate(1000.0)
+    #     waiting.sleep()
 
-        self.is_active = True
+    # def action_5(self):
+    #     self.is_active = True
+    #     self.is_following = False
+    #     self.follow_pub.publish(self.is_following)
 
-        sp = Point
-        if self.is_a is False:
-            sp.x = self.setpoint_a.x
-            sp.y = self.setpoint_a.y
-            sp.z = self.setpoint_a.z
+    #     # first delete the sp_list element, the list was initialized with
+    #     # need to do that exactly one time
+    #     if self.already_done is False:
+    #         self.already_done = True
+    #         self.sp_list.pop()
 
-            dist_to_sp = math.sqrt((sp.x - self.x)**2
-                                   + (sp.y - self.y)**2
-                                   + (sp.z - self.z)**2)
-            while dist_to_sp < 0.15:
-                # when its close to its destination it shouldnt stop
-                # publishing the setpoints but it should lose the"active"status
+    #     le = len(self.sp_list)
 
-                self.setpoint_pub.publish(sp)
-        else:
-            sp.x = self.setpoint_b.x
-            sp.y = self.setpoint_b.y
-            sp.z = self.setpoint_b.z
-
-    def action_4(self):
-        # safe a position to the list
-        sp = Point
-        sp.x = self.x
-        sp.y = self.y
-        sp.z = self.z
-        self.sp_list.append(sp)
-
-    def action_5(self):
-        sp = Point
-        sp.x = 0.7
-        sp.y = 2
-        sp.z = -0.7
-        self.setpoint_pub.publish(sp)
+    #     # let bluerov go from setpoint to setpoint
+    #     if self.is_down is True:
+    #         for i in range(le):
+    #             self.setpoint.x = self.sp_list[i].x
+    #             self.setpoint.y = self.sp_list[i].y
+    #             self.setpoint.z = self.sp_list[i].z
+    #             dist_to_sp = math.sqrt((self.setpoint.x - self.x)**2
+    #                                    + (self.setpoint.y - self.y)**2
+    #                                    + (self.setpoint.z - self.z)**2)
+    #             while dist_to_sp > 0.05:
+    #                 self.setpoint_pub.publish(self.setpoint)
+    #                 hold = rospy.Rate(100)
+    #                 hold.sleep()
+    #                 dist_to_sp = math.sqrt((self.setpoint.x - self.x)**2
+    #                                        + (self.setpoint.y - self.y)**2
+    #                                        + (self.setpoint.z - self.z)**2)
+    #         hold = rospy.Rate(5000)
+    #         hold.sleep()
+    #         self.is_down = False
+    #     else:
+    #         for i in range(le):
+    #             self.setpoint.x = self.sp_list[le-i].x
+    #             self.setpoint.y = self.sp_list[le-i].y
+    #             self.setpoint.z = self.sp_list[le-i].z
+    #             dist_to_sp = math.sqrt((self.setpoint.x - self.x)**2
+    #                                    + (self.setpoint.y - self.y)**2
+    #                                    + (self.setpoint.z - self.z)**2)
+    #             while dist_to_sp > 0.05:
+    #                 self.setpoint_pub.publish(self.setpoint)
+    #                 hold = rospy.Rate(100)
+    #                 hold.sleep()
+    #                 dist_to_sp = math.sqrt((self.setpoint.x - self.x)**2
+    #                                        + (self.setpoint.y - self.y)**2
+    #                                        + (self.setpoint.z - self.z)**2)
+    #         hold = rospy.Rate(5000)
+    #         hold.sleep()
+    #         self.is_down = True
+    #     self.is_active = False
 
 
 def main():
